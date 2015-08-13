@@ -1,0 +1,49 @@
+<% dbh = DBI.connect('DBI:SQLite3:book_info_sqlite3.db') %>
+<% sth = dbh.execute("select * from bookinfos;") %>
+<html>
+<head>
+	<meta http-equiv="Content-Type" cpntent="text/html"; charset="UTF-8">
+	<link rel="stylesheet" href="default.css">
+	<title>蔵書管理</title>
+</head>
+<body>
+<h1>蔵書管理</h1>
+<h2>蔵書データの登録</h2>
+<p>登録データを入力してください | 
+<a href = "list.erb">蔵書データの表示</a> |
+<a href = "index.html">メニュー画面に戻る</a></p>
+<hr>
+<% id_num = 0 %>
+<% sth.each do |row| %>
+<% row.each_with_name do |val, name| %>
+<% if name == 'id' then %>
+  <% id_num += 1%>
+    <% end %>
+<%   end %>
+<% end %>
+
+<form method ="post" action ="entry">
+<table>
+	<tr>
+		<th>項目名</th><th>入力データ</th>
+	</tr>
+<% ['id','title','author','page','publish_date'].each do |name| %>
+	<tr>
+		<td><%= name %></td>
+		<% if name == 'id'%>
+		<%=puts (id_num+1).to_s%>
+		<td><input type="text" name="<%=name%>" size="60" value="<%=(id_num+1).to_s%>"/></td>
+		<% else %>
+		<td><input type="text" name="<%=name%>" size="60" /></td>
+		<% end %>
+	</tr>
+<% end %>
+
+</table>
+<input type="submit" value="登録を実行" />
+</form>
+<hr>
+
+</body>
+</html>
+

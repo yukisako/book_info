@@ -1,0 +1,46 @@
+<% require 'rubygems' %>
+<% require 'dbi' %>
+<% require 'date' %>
+
+<% dbh = DBI.connect('DBI:SQLite3:book_info_sqlite3.db') %>
+<% sth = dbh.execute("select * from bookinfos where id =\'#{target_id}\';") %>
+
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html";
+charset="UTF-8">
+  <link rel ="stylesheet" type="text/css" href="default.css">
+  <title>蔵書管理</title>
+</head>
+<body>
+<h1>蔵書管理</h1>
+<h2>蔵書データの編集</h2>
+<p>このデータを修正します(idは連番で振られるので変更できません) |
+<a href="list.erb">蔵書データの表示</a>|
+<a href="index.html">メニュー画面に戻る</a></p>
+<hr>
+
+<form method = "post" action="edit">
+<input type ="hidden" name ="id" value="<%=target_id%>"/>
+<table>
+<%#テーブルの項目名を取り出して表の項目行を表示 %>
+
+    <% sth.each do |row| %>
+    <th>項目名</th><th>修正データ</th>
+  <% ['id','title','author','page','publish_date'].each do |name| %>
+  <tr>
+    <td><%= name %></td>
+    <% if name == 'id' %>
+  <td><input name="<%=name%>" value="<%=row[name]%>" disabled="disabled" size="60"/></td>
+    <% else %>
+    <td><input name="<%=name%>" value="<%=row[name]%>" size="60"/></td>
+    <% end %>
+  </tr>
+  <% end %>
+<% end %>
+</table>
+<input type="submit" value ="選択した処理を実行" />
+<hr>
+</body>
+</html>
+

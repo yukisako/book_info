@@ -1,0 +1,52 @@
+<% require 'rubygems' %>
+<% require 'dbi' %>
+<% require 'date' %>
+
+<% dbh = DBI.connect('DBI:SQLite3:book_info_sqlite3.db') %>
+<% sth = dbh.execute("select * from bookinfos;") %>
+
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html";
+charset="UTF-8">
+  <link rel ="stylesheet" type="text/css" href="default.css">
+  <title>蔵書管理</title>
+</head>
+<body>
+<h1>蔵書管理</h1>
+<h2>蔵書データの表示</h2>
+<p>処理を選択してください|
+<a href="list.erb">蔵書データの表示</a>|
+<a href="entry.erb">蔵書データの登録</a>|
+<a href="retrieve.erb">蔵書データの検索</a>|
+<a href="index.html">メニュー画面に戻る</a></p>
+<hr>
+
+<form method = "post" action="list">
+<table>
+<%#テーブルの項目名を取り出して表の項目行を表示 %>
+  <tr>
+    <th>削除</th><th>修正</th>
+<% sth.column_names.each do |name| %>
+  <th><%= "#{name}" %> </th>
+<% end %>
+  </tr>
+
+<% sth.each do |row| %>
+  <tr>
+<% row.each_with_name do |val, name| %>
+<% if name == 'id' then %>
+  <td><input type="radio" name ="oparation" value=<%="#{val}.delete"%> /></td>
+  <td><input type="radio" name ="oparation" value=<%="#{val}.edit"%> /></td>
+    <% end %>
+    <td><%= "#{val.to_s}" %></td>
+<%   end %>
+</tr>
+<% end %>
+</table>
+<input type="submit" value ="選択した処理を実行" />
+<hr>
+</body>
+</html>
+<% sth.finish %>
+<% dbh.disconnect %>
